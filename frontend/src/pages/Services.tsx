@@ -4,52 +4,52 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/api";
+
+// Icon mapping
+const iconMap: { [key: string]: any } = {
+  Code,
+  Smartphone,
+  Cloud,
+  Brain,
+  Database,
+  Shield,
+};
 
 const Services = () => {
-  const services = [
-    {
-      icon: Code,
-      title: "Web Development",
-      description:
-        "Custom web applications built with modern frameworks and technologies. From responsive websites to complex web platforms.",
-      features: ["React & Next.js", "Full-Stack Development", "E-commerce Solutions", "Progressive Web Apps"],
-    },
-    {
-      icon: Smartphone,
-      title: "Mobile App Development",
-      description:
-        "Native and cross-platform mobile applications for iOS and Android that deliver exceptional user experiences.",
-      features: ["iOS Development", "Android Development", "React Native", "Flutter Apps"],
-    },
-    {
-      icon: Cloud,
-      title: "Cloud Solutions",
-      description:
-        "Scalable cloud infrastructure and migration services to optimize your operations and reduce costs.",
-      features: ["AWS & Azure", "Cloud Migration", "DevOps & CI/CD", "Serverless Architecture"],
-    },
-    {
-      icon: Brain,
-      title: "AI & Machine Learning",
-      description:
-        "Intelligent solutions powered by artificial intelligence and machine learning to automate and optimize processes.",
-      features: ["Predictive Analytics", "Natural Language Processing", "Computer Vision", "AI Chatbots"],
-    },
-    {
-      icon: Database,
-      title: "Database Management",
-      description:
-        "Robust database design, optimization, and management for efficient data storage and retrieval.",
-      features: ["SQL & NoSQL", "Database Design", "Performance Tuning", "Data Migration"],
-    },
-    {
-      icon: Shield,
-      title: "Cybersecurity",
-      description:
-        "Comprehensive security solutions to protect your digital assets and ensure compliance with industry standards.",
-      features: ["Security Audits", "Penetration Testing", "Compliance Management", "Security Training"],
-    },
-  ];
+  const { data: services, isLoading, error } = useQuery({
+    queryKey: ['services'],
+    queryFn: () => api.get('/services').then(res => res.data),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <section className="pt-32 pb-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center">Loading...</div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <section className="pt-32 pb-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center text-red-500">Error loading services</div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -74,28 +74,37 @@ const Services = () => {
       {/* Services Grid */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <Card
-                key={index}
-                className="p-8 bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all group hover:shadow-lg hover:shadow-primary/10"
-              >
-                <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:animate-glow">
-                  <service.icon className="text-primary" size={32} />
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-4">{service.title}</h3>
-                <p className="text-muted-foreground mb-6">{service.description}</p>
-                <ul className="space-y-2">
-                  {service.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            ))}
-          </div>
+          {services && services.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {services.map((service: any, index: number) => {
+                const IconComponent = iconMap[service.icon] || Code;
+                return (
+                  <Card
+                    key={service._id || index}
+                    className="p-8 bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all group hover:shadow-lg hover:shadow-primary/10"
+                  >
+                    <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:animate-glow">
+                      <IconComponent className="text-primary" size={32} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-foreground mb-4">{service.title}</h3>
+                    <p className="text-muted-foreground mb-6">{service.description}</p>
+                    <ul className="space-y-2">
+                      {service.features?.map((feature: string, idx: number) => (
+                        <li key={idx} className="flex items-center text-sm text-muted-foreground">
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No services available at the moment.</p>
+            </div>
+          )}
         </div>
       </section>
 

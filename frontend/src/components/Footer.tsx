@@ -6,83 +6,83 @@ const Footer = () => {
 
   return (
     <footer className="bg-card border-t border-border">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-10 md:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* Company Info */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4 animate-fade-in-up">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
-                <span className="text-2xl font-bold text-primary">S</span>
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/20 rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                <span className="text-xl sm:text-2xl font-bold text-primary">S</span>
               </div>
-              <span className="text-xl font-bold text-foreground">
-                Speshway<span className="text-primary">.</span>
+              <span className="text-lg sm:text-xl font-bold text-foreground">
+                Speshway solutions Pvt Ltd<span className="text-primary"></span>
               </span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Delivering innovative IT solutions and driving digital transformation for businesses worldwide.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-3 sm:space-x-4">
               <a
                 href="#"
-                className="w-10 h-10 rounded-lg bg-secondary/50 hover:bg-primary/20 flex items-center justify-center transition-colors group"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-secondary/50 hover:bg-primary/20 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
               >
-                <Facebook size={18} className="text-muted-foreground group-hover:text-primary transition-colors" />
+                <Facebook size={16} className="sm:w-[18px] sm:h-[18px] text-muted-foreground group-hover:text-primary transition-colors" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 rounded-lg bg-secondary/50 hover:bg-primary/20 flex items-center justify-center transition-colors group"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-secondary/50 hover:bg-primary/20 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
               >
-                <Twitter size={18} className="text-muted-foreground group-hover:text-primary transition-colors" />
+                <Twitter size={16} className="sm:w-[18px] sm:h-[18px] text-muted-foreground group-hover:text-primary transition-colors" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 rounded-lg bg-secondary/50 hover:bg-primary/20 flex items-center justify-center transition-colors group"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-secondary/50 hover:bg-primary/20 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
               >
-                <Linkedin size={18} className="text-muted-foreground group-hover:text-primary transition-colors" />
+                <Linkedin size={16} className="sm:w-[18px] sm:h-[18px] text-muted-foreground group-hover:text-primary transition-colors" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 rounded-lg bg-secondary/50 hover:bg-primary/20 flex items-center justify-center transition-colors group"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-secondary/50 hover:bg-primary/20 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
               >
-                <Instagram size={18} className="text-muted-foreground group-hover:text-primary transition-colors" />
+                <Instagram size={16} className="sm:w-[18px] sm:h-[18px] text-muted-foreground group-hover:text-primary transition-colors" />
               </a>
             </div>
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-4">Quick Links</h3>
+          <div className="animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300 inline-block hover:translate-x-1">
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/about" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300 inline-block hover:translate-x-1">
                   About
                 </Link>
               </li>
               <li>
-                <Link to="/services" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/services" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300 inline-block hover:translate-x-1">
                   Services
                 </Link>
               </li>
               <li>
-                <Link to="/portfolio" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Portfolio
+                <Link to="/portfolio" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300 inline-block hover:translate-x-1">
+                  Our Projects
                 </Link>
               </li>
             </ul>
           </div>
 
           {/* Services */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-4">Services</h3>
+          <div className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Services</h3>
             <ul className="space-y-2">
-              {["Web Development", "Mobile Apps", "Cloud Solutions", "AI & ML"].map((service) => (
+              {["Web Development", "Mobile Apps", "Cloud Solutions", "AI & ML"].map((service, index) => (
                 <li key={service}>
-                  <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <a href="#" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300 inline-block hover:translate-x-1">
                     {service}
                   </a>
                 </li>
@@ -91,34 +91,34 @@ const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-4">Contact</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start space-x-3">
-                <MapPin size={18} className="text-primary mt-0.5 flex-shrink-0" />
+          <div className="animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Contact</h3>
+            <ul className="space-y-2 sm:space-y-3">
+              <li className="flex items-start space-x-2 sm:space-x-3">
+                <MapPin size={16} className="sm:w-[18px] sm:h-[18px] text-primary mt-0.5 flex-shrink-0" />
                 <a 
                   href="https://maps.google.com/?q=Plot+No.+1024,+4th+Floor,+Repunjaya+Building,+Madhapur+Hyderabad,+Telangana" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300 break-words"
                 >
                   Plot No. 1024, 4th Floor, Repunjaya Building, Madhapur, Hyderabad, Telangana
                 </a>
               </li>
-              <li className="flex items-center space-x-3">
-                <Phone size={18} className="text-primary flex-shrink-0" />
+              <li className="flex items-center space-x-2 sm:space-x-3">
+                <Phone size={16} className="sm:w-[18px] sm:h-[18px] text-primary flex-shrink-0" />
                 <a 
                   href="tel:+919100006020" 
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300"
                 >
                   +91 9100006020
                 </a>
               </li>
-              <li className="flex items-center space-x-3">
-                <Mail size={18} className="text-primary flex-shrink-0" />
+              <li className="flex items-center space-x-2 sm:space-x-3">
+                <Mail size={16} className="sm:w-[18px] sm:h-[18px] text-primary flex-shrink-0" />
                 <a 
                   href="mailto:info@speshway.com" 
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300 break-all"
                 >
                   info@speshway.com
                 </a>
@@ -127,16 +127,16 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground">
+        <div className="mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8 border-t border-border">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
               © {currentYear} Speshway Solutions Private Limited. All rights reserved.
             </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <div className="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6">
+              <Link to="#" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
                 Privacy Policy
               </Link>
-              <Link to="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link to="#" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
                 Terms of Service
               </Link>
             </div>

@@ -4,12 +4,19 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/api";
 
 const Portfolio = () => {
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openProjectDetails = (project) => {
+  const { data: projects, isLoading, error } = useQuery({
+    queryKey: ['portfolios'],
+    queryFn: () => api.get('/portfolios').then(res => res.data),
+  });
+
+  const openProjectDetails = (project: any) => {
     setSelectedProject(project);
     setIsModalOpen(true);
   };
@@ -19,50 +26,33 @@ const Portfolio = () => {
     setIsModalOpen(false);
   };
 
-  const projects = [
-    {
-      title: "E-Commerce Platform",
-      category: "Web Development",
-      description: "A full-featured e-commerce platform with inventory management and payment integration.",
-      technologies: ["React", "Node.js", "MongoDB", "Stripe"],
-      color: "from-blue-500/20 to-cyan-500/20",
-    },
-    {
-      title: "Healthcare Management System",
-      category: "Web Application",
-      description: "Comprehensive patient management system with appointment scheduling and records management.",
-      technologies: ["Next.js", "PostgreSQL", "TypeScript", "AWS"],
-      color: "from-green-500/20 to-emerald-500/20",
-    },
-    {
-      title: "Mobile Banking App",
-      category: "Mobile Development",
-      description: "Secure mobile banking application with real-time transactions and biometric authentication.",
-      technologies: ["React Native", "Firebase", "Node.js"],
-      color: "from-purple-500/20 to-pink-500/20",
-    },
-    {
-      title: "AI Analytics Dashboard",
-      category: "AI & Machine Learning",
-      description: "Real-time analytics dashboard with predictive insights powered by machine learning.",
-      technologies: ["Python", "TensorFlow", "React", "FastAPI"],
-      color: "from-orange-500/20 to-red-500/20",
-    },
-    {
-      title: "Supply Chain Management",
-      category: "Enterprise Solution",
-      description: "End-to-end supply chain tracking and management system for manufacturing industry.",
-      technologies: ["Angular", "Java Spring", "Oracle", "Docker"],
-      color: "from-teal-500/20 to-cyan-500/20",
-    },
-    {
-      title: "Social Media Platform",
-      category: "Web Application",
-      description: "Feature-rich social networking platform with real-time messaging and content sharing.",
-      technologies: ["Vue.js", "GraphQL", "Redis", "PostgreSQL"],
-      color: "from-indigo-500/20 to-purple-500/20",
-    },
-  ];
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <section className="pt-32 pb-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center">Loading...</div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <section className="pt-32 pb-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center text-red-500">Error loading projects</div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -74,7 +64,7 @@ const Portfolio = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-              Our <span className="text-primary">Portfolio</span>
+              Our <span className="text-primary">Projects</span>
             </h1>
             <p className="text-xl text-muted-foreground">
               Showcasing our successful projects and the innovative solutions we've delivered for clients worldwide.
@@ -86,44 +76,61 @@ const Portfolio = () => {
       {/* Portfolio Grid */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, index) => (
-              <Card
-                key={index}
-                className="overflow-hidden bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all group"
-              >
-                <div className={`h-48 bg-gradient-to-br ${project.color} flex items-center justify-center relative overflow-hidden`}>
-                  <div className="absolute inset-0 bg-background/20" />
-                  <div className="text-6xl font-bold text-primary/20 relative z-10">
-                    {project.title.charAt(0)}
+          {projects && projects.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.map((project: any, index: number) => (
+                <Card
+                  key={project._id || index}
+                  className="overflow-hidden bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all group"
+                >
+                  {project.image?.url ? (
+                    <div className="h-48 relative overflow-hidden">
+                      <img
+                        src={project.image.url}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                    </div>
+                  ) : (
+                    <div className={`h-48 bg-gradient-to-br ${project.color || 'from-blue-500/20 to-cyan-500/20'} flex items-center justify-center relative overflow-hidden`}>
+                      <div className="absolute inset-0 bg-background/20" />
+                      <div className="text-6xl font-bold text-primary/20 relative z-10">
+                        {project.title.charAt(0)}
+                      </div>
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <div className="text-sm text-primary font-medium mb-2">{project.category}</div>
+                    <h3 className="text-xl font-bold text-foreground mb-3">{project.title}</h3>
+                    <p className="text-muted-foreground mb-4">{project.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.technologies?.map((tech: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1 bg-secondary/50 rounded-full text-xs text-muted-foreground border border-border"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      className="w-full text-primary hover:text-primary hover:bg-primary/10 group-hover:translate-x-1 transition-transform"
+                      onClick={() => openProjectDetails(project)}
+                    >
+                      View Details
+                      <ExternalLink size={16} className="ml-2" />
+                    </Button>
                   </div>
-                </div>
-                <div className="p-6">
-                  <div className="text-sm text-primary font-medium mb-2">{project.category}</div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">{project.title}</h3>
-                  <p className="text-muted-foreground mb-4">{project.description}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech, idx) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 bg-secondary/50 rounded-full text-xs text-muted-foreground border border-border"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    className="w-full text-primary hover:text-primary hover:bg-primary/10 group-hover:translate-x-1 transition-transform"
-                    onClick={() => openProjectDetails(project)}
-                  >
-                    View Details
-                    <ExternalLink size={16} className="ml-2" />
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No projects available at the moment.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -180,6 +187,15 @@ const Portfolio = () => {
               </div>
               
               <div className="space-y-6">
+                {selectedProject.image?.url && (
+                  <div className="w-full h-64 rounded-lg overflow-hidden">
+                    <img
+                      src={selectedProject.image.url}
+                      alt={selectedProject.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
                 <div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">Project Overview</h3>
                   <p className="text-muted-foreground leading-relaxed">{selectedProject.description}</p>
@@ -188,7 +204,7 @@ const Portfolio = () => {
                 <div>
                   <h3 className="text-lg font-semibold text-foreground mb-3">Technologies Used</h3>
                   <div className="flex flex-wrap gap-2">
-                    {selectedProject.technologies.map((tech, idx) => (
+                    {selectedProject.technologies?.map((tech: string, idx: number) => (
                       <span
                         key={idx}
                         className="px-3 py-1 bg-secondary/50 rounded-full text-sm text-muted-foreground border border-border"

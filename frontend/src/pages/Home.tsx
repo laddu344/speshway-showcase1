@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import heroImage from "@/assets/hero-bg.png";
+import { FadeIn, StaggerContainer, StaggerItem, HoverScale } from "@/components/animations";
 
 const Home = () => {
   const features = [
@@ -52,7 +53,8 @@ const Home = () => {
 
         {/* Content */}
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in-up">
+          <FadeIn delay={0.2} duration={0.8}>
+            <div className="max-w-4xl mx-auto text-center space-y-8">
             <div className="inline-block">
               <span className="px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium animate-glow">
                 Welcome to the Future of IT
@@ -86,7 +88,8 @@ const Home = () => {
                 </Button>
               </Link>
             </div>
-          </div>
+            </div>
+          </FadeIn>
         </div>
 
         {/* Floating Elements */}
@@ -97,20 +100,34 @@ const Home = () => {
       {/* Stats Section */}
       <section className="py-20 bg-secondary/20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <Card className="p-8 bg-card/50 backdrop-blur-sm border-border text-center group hover:border-primary/50 transition-all">
+          <StaggerContainer staggerDelay={0.15}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <StaggerItem>
+                <HoverScale scale={1.05}>
+                  <Card className="p-8 bg-card/50 backdrop-blur-sm border-border text-center group hover:border-primary/50 transition-all">
               <div className="text-5xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform">100+</div>
-              <div className="text-muted-foreground">Projects Delivered</div>
-            </Card>
-            <Card className="p-8 bg-card/50 backdrop-blur-sm border-border text-center group hover:border-primary/50 transition-all">
-              <div className="text-5xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform">76+</div>
-              <div className="text-muted-foreground">Happy Clients</div>
-            </Card>
-            <Card className="p-8 bg-card/50 backdrop-blur-sm border-border text-center group hover:border-primary/50 transition-all">
-              <div className="text-5xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform">300+</div>
-              <div className="text-muted-foreground">Team Members</div>
-            </Card>
-          </div>
+                    <div className="text-muted-foreground">Projects Delivered</div>
+                  </Card>
+                </HoverScale>
+              </StaggerItem>
+              <StaggerItem>
+                <HoverScale scale={1.05}>
+                  <Card className="p-8 bg-card/50 backdrop-blur-sm border-border text-center group hover:border-primary/50 transition-all">
+                    <div className="text-5xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform">76+</div>
+                    <div className="text-muted-foreground">Happy Clients</div>
+                  </Card>
+                </HoverScale>
+              </StaggerItem>
+              <StaggerItem>
+                <HoverScale scale={1.05}>
+                  <Card className="p-8 bg-card/50 backdrop-blur-sm border-border text-center group hover:border-primary/50 transition-all">
+                    <div className="text-5xl font-bold text-primary mb-2 group-hover:scale-110 transition-transform">300+</div>
+                    <div className="text-muted-foreground">Team Members</div>
+                  </Card>
+                </HoverScale>
+              </StaggerItem>
+            </div>
+          </StaggerContainer>
         </div>
       </section>
 
@@ -124,21 +141,23 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <Card
-                key={index}
-                className="p-6 bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-300 group hover:shadow-lg hover:shadow-primary/10 animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
+          <StaggerContainer staggerDelay={0.1}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {features.map((feature, index) => (
+                <StaggerItem key={index}>
+                  <HoverScale>
+                    <Card className="p-6 bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-300 group hover:shadow-lg hover:shadow-primary/10">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:animate-glow transition-all">
                   <feature.icon className="text-primary" size={24} />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </Card>
-            ))}
-          </div>
+                      <p className="text-muted-foreground">{feature.description}</p>
+                    </Card>
+                  </HoverScale>
+                </StaggerItem>
+              ))}
+            </div>
+          </StaggerContainer>
         </div>
       </section>
 

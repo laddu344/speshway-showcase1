@@ -1,0 +1,61 @@
+import axios from 'axios';
+
+// Base API URL - can be configured via environment variable
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
+// Create axios instance with default config
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 10000, // 10 second timeout
+});
+
+// Request interceptor to add auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Log error for debugging
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timeout - Backend server may not be running');
+    } else if (error.message === 'Network Error') {
+      console.error('Network Error - Cannot connect to backend. Make sure backend is running on', API_BASE_URL);
+    } else if (!error.response) {
+      console.error('No response from server - Backend may be down');
+    }
+    
+    if (error.response?.status === 401) {
+      // Unauthorized - clear token and redirect to login
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      if (window.location.pathname.startsWith('/admin')) {
+        window.location.href = '/admin/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Export base URL for file access
+export const getBaseUrl = () => {
+  return API_BASE_URL.replace('/api', '');
+};
+
+export default api;
+

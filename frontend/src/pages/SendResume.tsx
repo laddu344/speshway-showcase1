@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import api from "@/lib/api";
 
 const SendResume = () => {
   const { toast } = useToast();
@@ -44,27 +45,24 @@ const SendResume = () => {
     formDataToSend.append("type", "resume");
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact/submit", {
-        method: "POST",
-        body: formDataToSend,
+      await api.post("/contact/submit", formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      if (response.ok) {
-        toast({
-          title: "Success!",
-          description: "Your resume has been submitted successfully. We'll review it and get back to you soon.",
-        });
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          position: "",
-          message: "",
-        });
-        setSelectedFile(null);
-      } else {
-        throw new Error("Failed to submit resume");
-      }
+      toast({
+        title: "Success!",
+        description: "Your resume has been submitted successfully. We'll review it and get back to you soon.",
+      });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        position: "",
+        message: "",
+      });
+      setSelectedFile(null);
     } catch (error) {
       toast({
         title: "Error",

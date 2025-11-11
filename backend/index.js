@@ -15,9 +15,24 @@ const app = express();
 
 // Body parser
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Enable CORS
-app.use(cors());
+// CORS Configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:8080',
+    'http://localhost:3000',
+    'http://127.0.0.1:8080',
+    'http://127.0.0.1:3000'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
+};
+
+// Enable CORS (handles preflight requests automatically)
+app.use(cors(corsOptions));
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -25,9 +40,27 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/contact', require('./routes/contact'));
+app.use('/api/services', require('./routes/services'));
+app.use('/api/portfolios', require('./routes/portfolios'));
+app.use('/api/team', require('./routes/team'));
 
+// Health check endpoint
 app.get('/', (req, res) => {
-  res.send('API is running...');
+  res.json({ 
+    message: 'API is running...',
+    status: 'ok',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// API health check
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    message: 'Backend API is healthy',
+    timestamp: new Date().toISOString(),
+    database: 'connected' // You can check DB connection status here
+  });
 });
 
 // Error handling middleware

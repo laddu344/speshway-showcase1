@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ant Design CSS - Imported via ConfigProvider in App.tsx */
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
@@ -71,5 +73,28 @@ All colors MUST be HSL.
 
   .glow-secondary {
     box-shadow: 0 0 20px hsl(var(--glow-secondary) / 0.3);
+  }
+
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-2;
+  }
+
+  .hover-glow {
+    @apply transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/20;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+
+  .shimmer-effect {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 3s linear infinite;
   }
 }

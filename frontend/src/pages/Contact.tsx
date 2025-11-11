@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import api from "@/lib/api";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -22,32 +23,22 @@ const Contact = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch("http://localhost:5000/api/contact/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          type: "contact",
-        }),
+      await api.post("/contact/submit", {
+        ...formData,
+        type: "contact",
       });
 
-      if (response.ok) {
-        toast({
-          title: "Message Sent!",
-          description: "We'll get back to you as soon as possible.",
-        });
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          subject: "",
-          message: "",
-        });
-      } else {
-        throw new Error("Failed to send message");
-      }
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you as soon as possible.",
+      });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
     } catch (error) {
       toast({
         title: "Error",
@@ -96,14 +87,14 @@ const Contact = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 relative overflow-hidden">
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6">
               Get In <span className="text-primary">Touch</span>
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground px-2">
               Have a question or want to discuss a project? We'd love to hear from you.
             </p>
           </div>
@@ -111,21 +102,22 @@ const Contact = () => {
       </section>
 
       {/* Contact Info Cards */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+      <section className="py-8 sm:py-12">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto">
             {contactInfo.map((info, index) => (
               <Card
                 key={index}
-                className="p-6 bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all text-center group"
+                className="p-4 sm:p-6 bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-300 text-center group hover-lift hover-glow animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:animate-glow">
-                  <info.icon className="text-primary" size={28} />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
+                  <info.icon className="text-primary" size={24} />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">{info.title}</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">{info.title}</h3>
                 <a
                   href={info.link}
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-sm sm:text-base text-muted-foreground hover:text-primary transition-colors duration-300 break-words"
                 >
                   {info.content}
                 </a>
@@ -136,18 +128,18 @@ const Contact = () => {
       </section>
 
       {/* Contact Form */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mx-auto">
-            <Card className="p-8 md:p-12 bg-card/50 backdrop-blur-sm border-border">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-foreground mb-2">Send Us a Message</h2>
-                <p className="text-muted-foreground">Fill out the form below and we'll respond within 24 hours</p>
+            <Card className="p-6 sm:p-8 md:p-12 bg-card/50 backdrop-blur-sm border-border hover-glow animate-scale-in">
+              <div className="text-center mb-6 sm:mb-8">
+                <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Send Us a Message</h2>
+                <p className="text-sm sm:text-base text-muted-foreground">Fill out the form below and we'll respond within 24 hours</p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
                     <label className="block text-sm font-medium text-foreground mb-2">Name *</label>
                     <Input
                       name="name"
@@ -155,10 +147,10 @@ const Contact = () => {
                       onChange={handleChange}
                       required
                       placeholder="Your name"
-                      className="bg-background/50 border-border focus:border-primary"
+                      className="bg-background/50 border-border focus:border-primary transition-all duration-300 focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
-                  <div>
+                  <div className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
                     <label className="block text-sm font-medium text-foreground mb-2">Email *</label>
                     <Input
                       type="email"
@@ -167,13 +159,13 @@ const Contact = () => {
                       onChange={handleChange}
                       required
                       placeholder="your@email.com"
-                      className="bg-background/50 border-border focus:border-primary"
+                      className="bg-background/50 border-border focus:border-primary transition-all duration-300 focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
                     <label className="block text-sm font-medium text-foreground mb-2">Phone</label>
                     <Input
                       type="tel"
@@ -181,10 +173,10 @@ const Contact = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="+91 1234567890"
-                      className="bg-background/50 border-border focus:border-primary"
+                      className="bg-background/50 border-border focus:border-primary transition-all duration-300 focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
-                  <div>
+                  <div className="animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
                     <label className="block text-sm font-medium text-foreground mb-2">Subject *</label>
                     <Input
                       name="subject"
@@ -192,12 +184,12 @@ const Contact = () => {
                       onChange={handleChange}
                       required
                       placeholder="How can we help?"
-                      className="bg-background/50 border-border focus:border-primary"
+                      className="bg-background/50 border-border focus:border-primary transition-all duration-300 focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                 </div>
 
-                <div>
+                <div className="animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
                   <label className="block text-sm font-medium text-foreground mb-2">Message *</label>
                   <Textarea
                     name="message"
@@ -206,18 +198,20 @@ const Contact = () => {
                     required
                     placeholder="Tell us more about your project..."
                     rows={6}
-                    className="bg-background/50 border-border focus:border-primary"
+                    className="bg-background/50 border-border focus:border-primary transition-all duration-300 focus:ring-2 focus:ring-primary/20 resize-none"
                   />
                 </div>
 
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                >
-                  Send Message
-                  <Send size={18} className="ml-2" />
-                </Button>
+                <div className="animate-fade-in-up" style={{ animationDelay: "0.6s" }}>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 group"
+                  >
+                    Send Message
+                    <Send size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </div>
               </form>
             </Card>
           </div>

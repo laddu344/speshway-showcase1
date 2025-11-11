@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import axios from 'axios';
+import api from '@/lib/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -20,7 +20,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5001/api/auth/login', {
+      const response = await api.post('/auth/login', {
         email,
         password,
       });
@@ -34,7 +34,7 @@ const Login = () => {
           description: 'Welcome to the admin panel!',
         });
         
-        navigate('/admin/submissions');
+        navigate('/admin/dashboard');
       }
     } catch (error: any) {
       toast({
