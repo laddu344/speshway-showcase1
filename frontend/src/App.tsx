@@ -2,12 +2,12 @@ import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import Chatbot from "@/components/Chatbot";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ConfigProvider, Spin } from "antd";
 import { antdTheme } from "@/config/antd-theme";
 
-// Lazy load all pages for better performance
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
 const Services = lazy(() => import("./pages/Services"));
@@ -28,7 +28,6 @@ const ManageTeam = lazy(() => import("./pages/admin/ManageTeam"));
 const ManageGallery = lazy(() => import("./pages/admin/ManageGallery"));
 const ManageClients = lazy(() => import("./pages/admin/ManageClients"));
 
-// Loading component
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">
     <Spin size="large" />
@@ -40,7 +39,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <Chatbot />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -61,8 +61,7 @@ const App = () => (
             <Route path="/admin/gallery" element={<ManageGallery />} />
             <Route path="/admin/clients" element={<ManageClients />} />
             <Route path="/admin/submissions" element={<Submissions />} />
-            <Route path="/admin" element={<AdminLogin />} /> {/* Redirect /admin to login */}
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/admin" element={<AdminLogin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

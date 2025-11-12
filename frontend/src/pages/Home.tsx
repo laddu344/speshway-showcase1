@@ -46,9 +46,7 @@ const Home = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        {/* Background Image */}
         <div
           className="absolute inset-0 z-0"
           style={{
@@ -58,11 +56,7 @@ const Home = () => {
             filter: "brightness(0.3)",
           }}
         />
-
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/50 via-background/70 to-background" />
-
-        {/* Content */}
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn delay={0.2} duration={0.8}>
             <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -103,12 +97,9 @@ const Home = () => {
           </FadeIn>
         </div>
 
-        {/* Floating Elements */}
         <div className="absolute bottom-20 left-10 w-20 h-20 bg-primary/20 rounded-full blur-3xl animate-float" />
         <div className="absolute top-40 right-20 w-32 h-32 bg-accent/20 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
       </section>
-
-      {/* Stats Section */}
       <section className="py-20 bg-secondary/20">
         <div className="container mx-auto px-4">
           <StaggerContainer staggerDelay={0.15}>
@@ -141,8 +132,6 @@ const Home = () => {
           </StaggerContainer>
         </div>
       </section>
-
-      {/* Features Section */}
       <section className="py-20 relative">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 animate-fade-in">
@@ -171,8 +160,6 @@ const Home = () => {
           </StaggerContainer>
         </div>
       </section>
-
-      {/* Clients Section */}
       <section className="py-20 bg-secondary/20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -212,23 +199,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10" />
-        <div className="container mx-auto px-4 relative z-10">
-          <Card className="p-12 bg-card/80 backdrop-blur-sm border-border text-center">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Ready to Start Your Project?</h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Let's discuss how we can help transform your business with our innovative solutions.
-            </p>
-            <Link to="/contact">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-                Contact Us Today
-              </Button>
-            </Link>
-          </Card>
-        </div>
-      </section>
+      
 
       <Footer />
     </div>
