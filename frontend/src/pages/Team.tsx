@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
+import { FadeIn, StaggerContainer, StaggerItem, HoverScale } from "@/components/animations";
 
 const Team = () => {
   const { data: team, isLoading, error } = useQuery({
@@ -48,14 +49,16 @@ const Team = () => {
       <section className="relative py-24 sm:py-28 md:py-32 bg-gradient-to-br from-primary/20 via-background to-background">
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6">
-              Meet Our <span className="text-primary">Team</span>
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground px-2">
-              Talented professionals dedicated to delivering exceptional results and driving your success.
-            </p>
-          </div>
+          <FadeIn>
+            <div className="max-w-4xl mx-auto text-center">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6">
+                Meet Our <span className="text-primary">Team</span>
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground px-2">
+                Talented professionals dedicated to delivering exceptional results and driving your success.
+              </p>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -67,13 +70,14 @@ const Team = () => {
           </div>
 
           {team && team.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {team.map((member: any, index: number) => (
-                <Card
-                  key={member._id || index}
-                  className="overflow-hidden bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-300 group hover-lift hover-glow animate-fade-in-up"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
+            <StaggerContainer staggerDelay={0.1}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                {team.map((member: any, index: number) => (
+                  <StaggerItem key={member._id || index}>
+                    <HoverScale>
+                      <Card
+                        className="overflow-hidden bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all duration-300 group hover-lift hover-glow"
+                      >
                   {member.image?.url ? (
                     <div className="h-48 sm:h-56 md:h-64 relative overflow-hidden">
                       <img
@@ -118,9 +122,12 @@ const Team = () => {
                       )}
                     </div>
                   </div>
-                </Card>
-              ))}
-            </div>
+                      </Card>
+                    </HoverScale>
+                  </StaggerItem>
+                ))}
+              </div>
+            </StaggerContainer>
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No team members available at the moment.</p>
@@ -140,29 +147,43 @@ const Team = () => {
               </p>
             </div>
             
+            <StaggerContainer staggerDelay={0.1}>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-              <Card className="p-5 sm:p-6 bg-card/50 backdrop-blur-sm border-border text-center hover-lift hover-glow transition-all duration-300 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+              <StaggerItem>
+              <HoverScale>
+              <Card className="p-5 sm:p-6 bg-card/50 backdrop-blur-sm border-border text-center hover-lift hover-glow transition-all duration-300">
                 <div className="text-3xl sm:text-4xl mb-3 sm:mb-4 hover:scale-110 transition-transform duration-300">🚀</div>
                 <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Innovation First</h3>
                 <p className="text-sm sm:text-base text-muted-foreground">
                   We encourage creativity and embrace new technologies
                 </p>
               </Card>
-              <Card className="p-5 sm:p-6 bg-card/50 backdrop-blur-sm border-border text-center hover-lift hover-glow transition-all duration-300 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+              </HoverScale>
+              </StaggerItem>
+              <StaggerItem>
+              <HoverScale>
+              <Card className="p-5 sm:p-6 bg-card/50 backdrop-blur-sm border-border text-center hover-lift hover-glow transition-all duration-300">
                 <div className="text-3xl sm:text-4xl mb-3 sm:mb-4 hover:scale-110 transition-transform duration-300">🤝</div>
                 <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Collaboration</h3>
                 <p className="text-sm sm:text-base text-muted-foreground">
                   Team work and knowledge sharing are at our core
                 </p>
               </Card>
-              <Card className="p-5 sm:p-6 bg-card/50 backdrop-blur-sm border-border text-center hover-lift hover-glow transition-all duration-300 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+              </HoverScale>
+              </StaggerItem>
+              <StaggerItem>
+              <HoverScale>
+              <Card className="p-5 sm:p-6 bg-card/50 backdrop-blur-sm border-border text-center hover-lift hover-glow transition-all duration-300">
                 <div className="text-3xl sm:text-4xl mb-3 sm:mb-4 hover:scale-110 transition-transform duration-300">📈</div>
                 <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Growth Mindset</h3>
                 <p className="text-sm sm:text-base text-muted-foreground">
                   Continuous learning and development opportunities
                 </p>
               </Card>
+              </HoverScale>
+              </StaggerItem>
             </div>
+            </StaggerContainer>
           </div>
         </div>
       </section>

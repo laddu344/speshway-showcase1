@@ -11,11 +11,11 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-3 sm:space-y-4 animate-fade-in-up">
             <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/20 rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/20 rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-300">
                 <span className="text-xl sm:text-2xl font-bold text-primary">S</span>
               </div>
               <span className="text-lg sm:text-xl font-bold text-foreground">
-                Speshway solutions Pvt Ltd<span className="text-primary"></span>
+                SPESHWAY SOLUTIONS PRIVATE LIMITED<span className="text-primary"></span>
               </span>
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground">
@@ -107,12 +107,12 @@ const Footer = () => {
               <li className="flex items-start space-x-2 sm:space-x-3">
                 <MapPin size={16} className="sm:w-[18px] sm:h-[18px] text-primary mt-0.5 flex-shrink-0" />
                 <a 
-                  href="https://maps.google.com/?q=Plot+No.+1024,+4th+Floor,+Repunjaya+Building,+Madhapur+Hyderabad,+Telangana" 
+                  href="https://maps.google.com/?q=T-Hub,+Plot+No+1%2FC,+Sy+No+83%2F1,+Raidurgam,+Knowledge+City+Rd,+panmaktha,+Hyderabad,+Serilingampalle+(M),+Telangana+500032" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300 break-words"
                 >
-                  Plot No. 1024, 4th Floor, Repunjaya Building, Madhapur, Hyderabad, Telangana
+                  T-Hub, Plot No 1/C, Sy No 83/1, Raidurgam, Knowledge City Rd, panmaktha, Hyderabad, Serilingampalle (M), Telangana 500032 
                 </a>
               </li>
               <li className="flex items-center space-x-2 sm:space-x-3">
@@ -121,7 +121,7 @@ const Footer = () => {
                   href="tel:+919100006020" 
                   className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300"
                 >
-                  +91 9876543210
+                  +91 9100006020
                 </a>
               </li>
               <li className="flex items-center space-x-2 sm:space-x-3">
@@ -140,7 +140,7 @@ const Footer = () => {
         <div className="mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8 border-t border-border">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
-              © {currentYear} Speshway Solutions Private Limited. All rights reserved.
+              © {currentYear} SPESHWAY SOLUTIONS PRIVATE LIMITED. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6">
               <Link to="#" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors duration-300">

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
+import { FadeIn, StaggerContainer, StaggerItem, HoverScale } from "@/components/animations";
 
 const FAQ = () => {
   const faqs = [
@@ -67,14 +68,16 @@ const FAQ = () => {
       <section className="pt-32 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-              Frequently Asked <span className="text-primary">Questions</span>
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              Find answers to common questions about our services, process, and how we can help your business.
-            </p>
-          </div>
+          <FadeIn>
+            <div className="max-w-3xl mx-auto text-center">
+              <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
+                Frequently Asked <span className="text-primary">Questions</span>
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                Find answers to common questions about our services, process, and how we can help your business.
+              </p>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -82,22 +85,25 @@ const FAQ = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <Card className="max-w-4xl mx-auto p-8 md:p-12 bg-card/50 backdrop-blur-sm border-border">
-            <Accordion type="single" collapsible className="space-y-4">
-              {faqs.map((faq, index) => (
-                <AccordionItem
-                  key={index}
-                  value={`item-${index}`}
-                  className="border border-border rounded-lg px-6 data-[state=open]:border-primary/50"
-                >
-                  <AccordionTrigger className="text-left hover:text-primary transition-colors">
-                    <span className="text-lg font-semibold">{faq.question}</span>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pt-2">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            <StaggerContainer staggerDelay={0.08}>
+              <Accordion type="single" collapsible className="space-y-4">
+                {faqs.map((faq, index) => (
+                  <StaggerItem key={index}>
+                    <AccordionItem
+                      value={`item-${index}`}
+                      className="border border-border rounded-lg px-6 data-[state=open]:border-primary/50"
+                    >
+                      <AccordionTrigger className="text-left hover:text-primary transition-colors">
+                        <span className="text-lg font-semibold">{faq.question}</span>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground pt-2">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </StaggerItem>
+                ))}
+              </Accordion>
+            </StaggerContainer>
           </Card>
         </div>
       </section>
@@ -106,6 +112,7 @@ const FAQ = () => {
       <section className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10" />
         <div className="container mx-auto px-4 relative z-10">
+          <HoverScale>
           <Card className="p-12 bg-card/80 backdrop-blur-sm border-border text-center max-w-3xl mx-auto">
             <h2 className="text-4xl font-bold text-foreground mb-4">Still Have Questions?</h2>
             <p className="text-xl text-muted-foreground mb-8">
@@ -117,6 +124,7 @@ const FAQ = () => {
               </Button>
             </Link>
           </Card>
+          </HoverScale>
         </div>
       </section>
 

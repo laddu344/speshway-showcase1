@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
+import { StaggerContainer, StaggerItem, HoverScale, FadeIn } from "@/components/animations";
 
 // Icon mapping
 const iconMap: { [key: string]: any } = {
@@ -59,15 +60,17 @@ const Services = () => {
       <section className="pt-32 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-              Our <span className="text-primary">Services</span>
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              Comprehensive IT solutions tailored to your business needs. From development to deployment, we've got you
-              covered.
-            </p>
-          </div>
+          <FadeIn>
+            <div className="max-w-3xl mx-auto text-center">
+              <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
+                Our <span className="text-primary">Services</span>
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                Comprehensive IT solutions tailored to your business needs. From development to deployment, we've got you
+                covered.
+              </p>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -75,31 +78,36 @@ const Services = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           {services && services.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services.map((service: any, index: number) => {
-                const IconComponent = iconMap[service.icon] || Code;
-                return (
-                  <Card
-                    key={service._id || index}
-                    className="p-8 bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all group hover:shadow-lg hover:shadow-primary/10"
-                  >
-                    <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:animate-glow">
-                      <IconComponent className="text-primary" size={32} />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-4">{service.title}</h3>
-                    <p className="text-muted-foreground mb-6">{service.description}</p>
-                    <ul className="space-y-2">
-                      {service.features?.map((feature: string, idx: number) => (
-                        <li key={idx} className="flex items-center text-sm text-muted-foreground">
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </Card>
-                );
-              })}
-            </div>
+            <StaggerContainer staggerDelay={0.1}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {services.map((service: any, index: number) => {
+                  const IconComponent = iconMap[service.icon] || Code;
+                  return (
+                    <StaggerItem key={service._id || index}>
+                      <HoverScale>
+                        <Card
+                          className="p-8 bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all group hover:shadow-lg hover:shadow-primary/10"
+                        >
+                          <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:animate-glow">
+                            <IconComponent className="text-primary" size={32} />
+                          </div>
+                          <h3 className="text-2xl font-bold text-foreground mb-4">{service.title}</h3>
+                          <p className="text-muted-foreground mb-6">{service.description}</p>
+                          <ul className="space-y-2">
+                            {service.features?.map((feature: string, idx: number) => (
+                              <li key={idx} className="flex items-center text-sm text-muted-foreground">
+                                <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3" />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </Card>
+                      </HoverScale>
+                    </StaggerItem>
+                  );
+                })}
+              </div>
+            </StaggerContainer>
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No services available at the moment.</p>

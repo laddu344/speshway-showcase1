@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
+import { StaggerContainer, StaggerItem, HoverScale, FadeIn } from "@/components/animations";
 
 const Portfolio = () => {
   const [selectedProject, setSelectedProject] = useState<any>(null);
@@ -62,7 +63,8 @@ const Portfolio = () => {
       <section className="pt-32 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
+          <FadeIn>
+          <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
               <span className="text-primary">Projects</span>
             </h1>
@@ -70,6 +72,7 @@ const Portfolio = () => {
               Showcasing our successful projects and the innovative solutions we've delivered for clients worldwide.
             </p>
           </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -77,12 +80,14 @@ const Portfolio = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           {projects && projects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects.map((project: any, index: number) => (
-                <Card
-                  key={project._id || index}
-                  className="overflow-hidden bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all group"
-                >
+            <StaggerContainer staggerDelay={0.1}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {projects.map((project: any, index: number) => (
+                  <StaggerItem key={project._id || index}>
+                    <HoverScale>
+                      <Card
+                        className="overflow-hidden bg-card/50 backdrop-blur-sm border-border hover:border-primary/50 transition-all group"
+                      >
                   {project.image?.url ? (
                     <div className="h-48 relative overflow-hidden">
                       <img
@@ -123,9 +128,12 @@ const Portfolio = () => {
                       <ExternalLink size={16} className="ml-2" />
                     </Button>
                   </div>
-                </Card>
-              ))}
-            </div>
+                      </Card>
+                    </HoverScale>
+                  </StaggerItem>
+                ))}
+              </div>
+            </StaggerContainer>
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No projects available at the moment.</p>
@@ -142,24 +150,23 @@ const Portfolio = () => {
               <h2 className="text-4xl font-bold text-foreground mb-4">Project Success Metrics</h2>
               <p className="text-xl text-muted-foreground">Numbers that speak for our commitment to excellence</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">98%</div>
-                <div className="text-muted-foreground">Client Satisfaction</div>
+            <StaggerContainer staggerDelay={0.1}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                {[
+                  { value: '98%', label: 'Client Satisfaction' },
+                  { value: '500+', label: 'Projects Delivered' },
+                  { value: '95%', label: 'On-Time Delivery' },
+                  { value: '50+', label: 'Industries Served' },
+                ].map((stat, idx) => (
+                  <StaggerItem key={idx}>
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-primary mb-2">{stat.value}</div>
+                      <div className="text-muted-foreground">{stat.label}</div>
+                    </div>
+                  </StaggerItem>
+                ))}
               </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">500+</div>
-                <div className="text-muted-foreground">Projects Delivered</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">95%</div>
-                <div className="text-muted-foreground">On-Time Delivery</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">50+</div>
-                <div className="text-muted-foreground">Industries Served</div>
-              </div>
-            </div>
+            </StaggerContainer>
           </div>
         </div>
       </section>
@@ -169,7 +176,7 @@ const Portfolio = () => {
       {/* Project Details Modal */}
       {isModalOpen && selectedProject && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-border">
+          <div className="bg-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-border animate-scale-in">
             <div className="p-6">
               <div className="flex justify-between items-start mb-6">
                 <div>

@@ -56,14 +56,17 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <img 
-              src="/logo.png" 
-              alt="Speshway Logo" 
-              className="w-8 h-8 sm:w-10 sm:h-10 group-hover:scale-110 transition-transform duration-300"
-            />
+            <div className="relative p-1 rounded-none bg-card/40 border border-border shadow-sm transition-transform duration-300 group-hover:scale-105">
+              <img
+                src="/logo.png"
+                alt="Speshway Logo"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-none"
+              />
+              <span className="absolute inset-0 rounded-none ring-0 group-hover:ring-2 ring-primary/30 transition-all animate-glow" />
+            </div>
             <span className="text-sm sm:text-lg md:text-xl font-bold text-foreground hidden sm:inline-block" style={{ fontFamily: 'Times New Roman, serif' }}>
-              <span className="hidden md:inline">Speshway Solutions Private Limited</span>
-              <span className="md:hidden">Speshway</span>
+              <span className="hidden md:inline">SPESHWAY SOLUTIONS PRIVATE LIMITED</span>
+              <span className="md:hidden">SPESHWAY</span>
               <span className="text-primary">.</span>
             </span>
           </Link>
@@ -79,7 +82,7 @@ const Navbar = () => {
                   navigate(link.path);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className={`relative px-3 py-2 text-sm font-medium transition-all duration-300 ease-out group ${
+                className={`relative px-3 py-2 text-sm font-medium transition-all duration-300 ease-out group hover:-translate-y-0.5 ${
                   isActive(link.path)
                     ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"

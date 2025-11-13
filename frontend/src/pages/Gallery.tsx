@@ -19,6 +19,7 @@ import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { FadeIn, StaggerContainer, StaggerItem, HoverScale } from '@/components/animations';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
@@ -257,14 +258,16 @@ const Gallery = () => {
       {/* Hero Section */}
       <section className="pt-32 pb-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-6">
-              Our Gallery
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Explore our journey through memorable moments, achievements, and celebrations
-            </p>
-          </div>
+          <FadeIn>
+            <div className="max-w-4xl mx-auto text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-6">
+                Our Gallery
+              </h1>
+              <p className="text-xl text-muted-foreground mb-8">
+                Explore our journey through memorable moments, achievements, and celebrations
+              </p>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -335,11 +338,17 @@ const Gallery = () => {
                               {items.length} {items.length === 1 ? 'item' : 'items'}
                             </Badge>
                           </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {items.map((item) => (
-                              <GalleryCard key={item._id} item={item} />
-                            ))}
-                          </div>
+                          <StaggerContainer staggerDelay={0.1}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                              {items.map((item) => (
+                                <StaggerItem key={item._id}>
+                                  <HoverScale>
+                                    <GalleryCard item={item} />
+                                  </HoverScale>
+                                </StaggerItem>
+                              ))}
+                            </div>
+                          </StaggerContainer>
                         </div>
                       );
                     })}
