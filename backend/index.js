@@ -1,3 +1,5 @@
+// index.js
+const serverless = require('serverless-http');
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -5,7 +7,7 @@ const path = require('path');
 const multer = require('multer');
 const connectDB = require('./config/db');
 
-// Load env vars
+// Load environment variables
 dotenv.config();
 
 // Connect to database
@@ -17,7 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS Configuration
+// CORS configuration
 const corsOptions = {
   origin: [
     'http://localhost:8080',
@@ -31,7 +33,6 @@ const corsOptions = {
   exposedHeaders: ['Content-Range', 'X-Content-Range']
 };
 
-// Enable CORS (handles preflight requests automatically)
 app.use(cors(corsOptions));
 
 // Serve static files from uploads directory
@@ -62,7 +63,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     message: 'Backend API is healthy',
     timestamp: new Date().toISOString(),
-    database: 'connected' // You can check DB connection status here
+    database: 'connected'
   });
 });
 
@@ -76,14 +77,15 @@ app.use((error, req, res, next) => {
       });
     }
   }
-  
+
   if (error.message && error.message.includes('Only PDF, DOC, and DOCX files')) {
     return res.status(400).json({
       success: false,
       message: error.message
     });
   }
-  
+
+  console.error(error);
   res.status(500).json({
     success: false,
     message: 'Internal server error',
@@ -91,6 +93,5 @@ app.use((error, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5001;
-
-app.listen(PORT, console.log(`Server running on port ${PORT}`));
+// Export handler for Serverless
+module.exports.handler = serverless(app);
