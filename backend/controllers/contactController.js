@@ -4,13 +4,14 @@ const path = require('path');
 const fs = require('fs');
 const sendEmail = require('../utils/email');
 const AWS = require('aws-sdk');
+
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
-// Temporary upload directory for Lambda
+// --------------------- Temporary Upload Directory ---------------------
 const TEMP_UPLOADS_DIR = '/tmp/uploads';
 if (!fs.existsSync(TEMP_UPLOADS_DIR)) fs.mkdirSync(TEMP_UPLOADS_DIR, { recursive: true });
 
-// Multer configuration
+// --------------------- Multer Configuration ---------------------
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, TEMP_UPLOADS_DIR),
   filename: (req, file, cb) => {
@@ -29,7 +30,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter });
 
-// Upload file to S3
+// --------------------- S3 Upload Helper ---------------------
 const uploadFileToS3 = async (filePath, fileName, mimeType) => {
   const fileContent = fs.readFileSync(filePath);
   const params = {
@@ -51,11 +52,12 @@ const submitContact = async (req, res) => {
   try {
     const { name, email, phone, subject, message, type } = req.body;
 
-    // Validate required fields
+    // Required field validation
     if (!name?.trim() || !email?.trim() || !subject?.trim() || (type !== 'resume' && !message?.trim())) {
       return res.status(400).json({ success: false, message: 'Please provide all required fields' });
     }
 
+    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) return res.status(400).json({ success: false, message: 'Invalid email' });
 
@@ -64,7 +66,7 @@ const submitContact = async (req, res) => {
       email: email.trim().toLowerCase(),
       phone: phone?.trim() || '',
       subject: subject.trim(),
-      message: message?.trim() || (type === 'resume' ? 'No message' : ''),
+      message: message?.trim() || (type === 'resume' ? 'No message provided' : ''),
       type: type || 'contact',
     };
 
