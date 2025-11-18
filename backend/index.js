@@ -53,10 +53,11 @@ app.get('/api/health', (req, res) => {
 });
 
 // ---------------- Serve frontend SPA ----------------
+// Serve frontend SPA
 const frontendPath = path.join(__dirname, 'frontend', 'dist');
 app.use(express.static(frontendPath));
 
-app.get('/*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
