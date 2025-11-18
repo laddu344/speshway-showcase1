@@ -15,11 +15,11 @@ connectDB();
 
 const app = express();
 
-// Body parser
+// ---------------- Body parser ----------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS configuration
+// ---------------- CORS ----------------
 app.use(cors({
   origin: '*',
   credentials: true,
@@ -28,10 +28,10 @@ app.use(cors({
   exposedHeaders: ['Content-Range','X-Content-Range']
 }));
 
-// Serve static files (uploads)
+// ---------------- Serve uploads ----------------
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// ---------------- API Routes ----------------
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/services', require('./routes/services'));
@@ -41,7 +41,7 @@ app.use('/api/gallery', require('./routes/gallery'));
 app.use('/api/clients', require('./routes/clients'));
 app.use('/api/sentences', require('./routes/sentences'));
 
-// Health check
+// ---------------- Health check ----------------
 app.get('/', (req, res) => {
   res.json({ 
     message: 'API running',
@@ -59,7 +59,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Error handling
+// ---------------- Serve frontend SPA ----------------
+const frontendPath = path.join(__dirname, 'frontend', 'dist');
+app.use(express.static(frontendPath));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// ---------------- Error handling ----------------
 app.use((error, req, res, next) => {
   console.error('Error:', error);
   if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
@@ -73,5 +81,5 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Export handler for Serverless
+// ---------------- Export handler for Serverless ----------------
 module.exports.handler = serverless(app);
