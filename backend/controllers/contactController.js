@@ -3,258 +3,191 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const sendEmail = require('../utils/email');
-
-// 💡 ADD AWS SDK for S3 operations
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
-// 🛠️ FIX 1: Use the writable /tmp directory
+// Temporary upload directory for Lambda
 const TEMP_UPLOADS_DIR = '/tmp/uploads';
+if (!fs.existsSync(TEMP_UPLOADS_DIR)) fs.mkdirSync(TEMP_UPLOADS_DIR, { recursive: true });
 
-// Create uploads directory in /tmp if it doesn't exist
-if (!fs.existsSync(TEMP_UPLOADS_DIR)) {
-  // This line is now safe because /tmp is writable
-  fs.mkdirSync(TEMP_UPLOADS_DIR, { recursive: true });
-}
-
-// Configure multer for file uploads
+// Multer configuration
 const storage = multer.diskStorage({
-  // 🛠️ FIX 2: Use the /tmp directory for temporary storage
-  destination: function (req, file, cb) {
-    cb(null, TEMP_UPLOADS_DIR);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+  destination: (req, file, cb) => cb(null, TEMP_UPLOADS_DIR),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
+  },
 });
 
 const fileFilter = (req, file, cb) => {
-  // Accept only PDF, DOC, DOCX files
   const allowedTypes = /pdf|doc|docx/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = allowedTypes.test(file.mimetype);
-
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb(new Error('Only PDF, DOC, and DOCX files are allowed for resume uploads'));
-  }
+  if (mimetype && extname) return cb(null, true);
+  cb(new Error('Only PDF, DOC, and DOCX files are allowed for resume uploads'));
 };
 
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
-  },
-  fileFilter: fileFilter
-});
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter });
 
-// 💡 NEW HELPER FUNCTION: Uploads file to S3
+// Upload file to S3
 const uploadFileToS3 = async (filePath, fileName, mimeType) => {
   const fileContent = fs.readFileSync(filePath);
-
   const params = {
-    Bucket: process.env.S3_BUCKET_NAME, // Must be set in Lambda environment variables
-    Key: `resumes/${fileName}`,         // Unique path in your S3 bucket
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: `resumes/${fileName}`,
     Body: fileContent,
     ContentType: mimeType,
-    ACL: 'private' // Set appropriate permissions
+    ACL: 'private',
   };
-
   const data = await s3.upload(params).promise();
-  // Return the public S3 URL (if needed) or the secure key
-  return data.Location; 
+  return data.Location;
 };
 
-// @desc    Submit contact form
-// @route   POST /api/contact/submit
-// @access  Public
-const submitContact = async (req, res) => {
-  let uploadedFilePath = null; // To track the temporary file for cleanup
+// --------------------- Controller Functions ---------------------
 
+// Submit contact form
+const submitContact = async (req, res) => {
+  let uploadedFilePath = null;
   try {
     const { name, email, phone, subject, message, type } = req.body;
 
-    // ... (Your validation code remains here) ...
-
-    // Validate required fields based on type
-    if (type === 'resume') {
-      if (!req.file) {
-        return res.status(400).json({
-          success: false,
-          message: 'Resume file is required for job applications'
-        });
-      }
-      if (!name || !name.trim() || !email || !email.trim() || !subject || !subject.trim()) {
-        return res.status(400).json({
-          success: false,
-          message: 'Name, email, and position are required fields'
-        });
-      }
-    } else {
-      if (!name || !name.trim() || !email || !email.trim() || !subject || !subject.trim() || !message || !message.trim()) {
-        return res.status(400).json({
-          success: false,
-          message: 'Please provide all required fields'
-        });
-      }
+    // Validate required fields
+    if (!name?.trim() || !email?.trim() || !subject?.trim() || (type !== 'resume' && !message?.trim())) {
+      return res.status(400).json({ success: false, message: 'Please provide all required fields' });
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide a valid email address'
-      });
-    }
+    if (!emailRegex.test(email.trim())) return res.status(400).json({ success: false, message: 'Invalid email' });
 
-    // Create contact submission
     const contactData = {
       name: name.trim(),
       email: email.trim().toLowerCase(),
-      phone: phone ? phone.trim() : '',
+      phone: phone?.trim() || '',
       subject: subject.trim(),
-      message: message && message.trim() ? message.trim() : (type === 'resume' ? 'No additional message provided.' : ''),
-      type: type || 'contact'
+      message: message?.trim() || (type === 'resume' ? 'No message' : ''),
+      type: type || 'contact',
     };
 
-    // Handle file upload
+    // Handle resume upload
     if (req.file) {
-      uploadedFilePath = req.file.path; // Set file path for cleanup
-
-      // 🛠️ FIX 3: Upload the file to S3 for permanent storage
-      const s3Url = await uploadFileToS3(
-        req.file.path, 
-        req.file.filename, 
-        req.file.mimetype
-      );
-
+      uploadedFilePath = req.file.path;
+      const s3Url = await uploadFileToS3(req.file.path, req.file.filename, req.file.mimetype);
       contactData.resume = {
         filename: req.file.filename,
         originalName: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,
-        // The local path is irrelevant/temporary in Lambda
-        path: req.file.path, 
-        // 🛠️ FIX 4: Store the permanent S3 URL/key instead of a local URL
-        url: s3Url 
+        url: s3Url,
       };
     }
 
     const contact = await Contact.create(contactData);
 
-    // If a resume was uploaded, send a professional email to admin
+    // Send email for resume submissions
     if (req.file && type === 'resume') {
-      // 🛠️ FIX 5: Use the permanent S3 URL in the email template
-      const resumeUrl = contactData.resume.url; 
-      
-      const companyName = 'Speshway Solutions Private Limited';
-      const submissionDate = new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-
       try {
         await sendEmail({
           to: process.env.ADMIN_EMAIL,
           subject: `New Job Application: ${subject}`,
-          html: `
-            // ... (Your long email HTML template here. The link to the resume should use resumeUrl) ...
-            
-            // 🛠️ Note: You may need to fetch the file from S3 to attach it if your sendEmail utility requires a file attachment, 
-            // or simply link to the S3 URL in the email body for the admin to download.
-            // For simplicity, this example uses the S3 URL in the email body (as you provided a full HTML template).
-          `,
-          // ⚠️ IMPORTANT: Sending attachments in Lambda is complex. If you still rely on this block, 
-          // you MUST change path: req.file.path to a downloaded S3 file if the execution context is new/clean, 
-          // but since this is an immediate follow-up to the upload, the local /tmp file should still be available.
-          attachments: [
-            {
-              filename: req.file.originalname,
-              path: req.file.path, 
-            },
-          ],
+          html: `<p>${name} applied for ${subject}. <a href="${contactData.resume.url}">Download Resume</a></p>`,
         });
       } catch (emailError) {
         console.error('Email sending error:', emailError);
       }
     }
 
-    res.status(201).json({
-      success: true,
-      message: 'Your message has been submitted successfully',
-      data: contact
-    });
+    res.status(201).json({ success: true, message: 'Submission successful', data: contact });
   } catch (error) {
     console.error('Contact submission error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to submit contact form',
-      error: error.message
-    });
+    res.status(500).json({ success: false, message: 'Failed to submit form', error: error.message });
   } finally {
-    // 💡 CLEANUP: Delete the temporary file from /tmp
-    if (uploadedFilePath) {
-      fs.unlink(uploadedFilePath, (err) => {
-        if (err) console.error('Error deleting temporary file from /tmp:', err);
-      });
-    }
+    if (uploadedFilePath) fs.unlink(uploadedFilePath, (err) => err && console.error('Failed to delete temp file:', err));
   }
 };
-// ... (The rest of your functions getSubmissions, getSubmission, etc. remain here) ...
-// ... (The deleteSubmission function needs to be updated to delete from S3, not the local disk) ...
 
-// @desc    Delete submission
-// @route   DELETE /api/contact/submission/:id
-// @access  Private/Admin
+// Get all submissions (Admin)
+const getSubmissions = async (req, res) => {
+  try {
+    const submissions = await Contact.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: submissions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to fetch submissions', error: error.message });
+  }
+};
+
+// Get single submission (Admin)
+const getSubmission = async (req, res) => {
+  try {
+    const submission = await Contact.findById(req.params.id);
+    if (!submission) return res.status(404).json({ success: false, message: 'Submission not found' });
+    res.status(200).json({ success: true, data: submission });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to fetch submission', error: error.message });
+  }
+};
+
+// Update submission status (Admin)
+const updateSubmissionStatus = async (req, res) => {
+  try {
+    const submission = await Contact.findById(req.params.id);
+    if (!submission) return res.status(404).json({ success: false, message: 'Submission not found' });
+    submission.status = req.body.status || submission.status;
+    await submission.save();
+    res.status(200).json({ success: true, message: 'Status updated', data: submission });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to update status', error: error.message });
+  }
+};
+
+// Reply to submission (Admin)
+const replyToSubmission = async (req, res) => {
+  try {
+    const submission = await Contact.findById(req.params.id);
+    if (!submission) return res.status(404).json({ success: false, message: 'Submission not found' });
+
+    await sendEmail({
+      to: submission.email,
+      subject: req.body.subject || 'Response from Admin',
+      html: req.body.message || 'Admin replied to your submission.',
+    });
+
+    res.status(200).json({ success: true, message: 'Reply sent successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to send reply', error: error.message });
+  }
+};
+
+// Delete submission (Admin)
 const deleteSubmission = async (req, res) => {
   try {
     const submission = await Contact.findById(req.params.id);
-    
-    if (!submission) {
-      return res.status(404).json({
-        success: false,
-        message: 'Submission not found'
-      });
+    if (!submission) return res.status(404).json({ success: false, message: 'Submission not found' });
+
+    // Delete resume from S3 if exists
+    if (submission.resume?.filename) {
+      const params = { Bucket: process.env.S3_BUCKET_NAME, Key: `resumes/${submission.resume.filename}` };
+      try { await s3.deleteObject(params).promise(); } catch (s3Error) { console.error('S3 delete error:', s3Error); }
     }
-    
-    // 🛠️ FIX 6: Delete associated resume file from S3, not the local disk
-    if (submission.resume && submission.resume.filename) {
-      const params = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: `resumes/${submission.resume.filename}`,
-      };
-      
-      try {
-        await s3.deleteObject(params).promise();
-      } catch (s3DeleteError) {
-        console.error('Error deleting resume file from S3:', s3DeleteError);
-        // Note: You might choose to continue deletion even if S3 fails
-      }
-    }
-    
+
     await submission.deleteOne();
-    
-    res.status(200).json({
-      success: true,
-      message: 'Submission deleted successfully'
-    });
+    res.status(200).json({ success: true, message: 'Submission deleted successfully' });
   } catch (error) {
-    console.error('Delete submission error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to delete submission',
-      error: error.message
-    });
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to delete submission', error: error.message });
   }
 };
 
+// --------------------- Export ---------------------
 module.exports = {
   submitContact,
-  // ... (Export all other functions)
+  getSubmissions,
+  getSubmission,
+  updateSubmissionStatus,
+  replyToSubmission,
   deleteSubmission,
-  upload
+  upload,
 };
