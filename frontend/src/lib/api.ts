@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base API URL - can be configured via environment variable
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://b7t38zhr3d.execute-api.us-east-1.amazonaws.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://b7t38zhr3d.execute-api.us-east-1.amazonaws.com/api/auth/login'
 
 // Create axios instance with default config
 const api = axios.create({
