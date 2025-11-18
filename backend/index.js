@@ -20,8 +20,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ---------------- CORS ----------------
+// Allow only your frontend URL
 app.use(cors({
-  origin: '*',
+  origin: 'http://prasadv2.s3-website-us-east-1.amazonaws.com',
   credentials: true,
   methods: ['GET','POST','PUT','DELETE','OPTIONS','PATCH'],
   allowedHeaders: ['Content-Type','Authorization','X-Requested-With'],
@@ -42,14 +43,6 @@ app.use('/api/clients', require('./routes/clients'));
 app.use('/api/sentences', require('./routes/sentences'));
 
 // ---------------- Health check ----------------
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'API running',
-    status: 'ok',
-    timestamp: new Date().toISOString()
-  });
-});
-
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok',
