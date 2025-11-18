@@ -1,14 +1,21 @@
 const express = require('express');
 const router = express.Router();
+
+// Import controller functions
+const contactController = require('../controllers/contactController');
+
+// Destructure safely with defaults to avoid undefined
 const {
-  submitContact,
-  getSubmissions,
-  getSubmission,
-  updateSubmissionStatus,
-  replyToSubmission,
-  deleteSubmission,
-  upload,
-} = require('../controllers/contactController');
+  submitContact = (req, res) => res.status(500).json({ error: 'submitContact not implemented' }),
+  getSubmissions = (req, res) => res.status(500).json({ error: 'getSubmissions not implemented' }),
+  getSubmission = (req, res) => res.status(500).json({ error: 'getSubmission not implemented' }),
+  updateSubmissionStatus = (req, res) => res.status(500).json({ error: 'updateSubmissionStatus not implemented' }),
+  replyToSubmission = (req, res) => res.status(500).json({ error: 'replyToSubmission not implemented' }),
+  deleteSubmission = (req, res) => res.status(500).json({ error: 'deleteSubmission not implemented' }),
+  upload
+} = contactController;
+
+// Import auth middleware
 const { protect, admin } = require('../middleware/authMiddleware');
 
 // --------------------- Public Route ---------------------
