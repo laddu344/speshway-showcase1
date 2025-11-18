@@ -2,7 +2,7 @@ const users = [
   {
     name: 'Admin User',
     email: 'admin@speshway.com',
-    password: 'admin123',
+    password: 'Admin123!',
     role: 'admin',
   },
   {
